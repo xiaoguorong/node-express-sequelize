@@ -1,0 +1,34 @@
+CREATE TABLE `c_customer` (
+`id`  int NOT NULL AUTO_INCREMENT COMMENT '车牌号' ,
+`code`  varchar(255) NULL ,
+`province`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT '车牌前缀' ,
+`mobile`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '手机号' ,
+`type`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 0 COMMENT '维修类型 0保养 1其他' ,
+`price`  int NULL COMMENT '收费' ,
+`date`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT "0000-00-00" COMMENT '维修日期' ,
+`content`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '备注' ,
+`databank_id`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件' ,
+`created_time`  int(11) NULL COMMENT '创建时间' ,
+`update_time`  int(11) NULL COMMENT '更新时间' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+COMMENT='客户表'
+;
+
+
+CREATE TABLE `c_data_bank` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`qnkey`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '七牛key' ,
+`status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
+`uid`  int(10) NOT NULL ,
+`create_time`  int(10) NULL ,
+`update_time`  int(10) NULL ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+COMMENT='文件表'
+;
+
+
+
