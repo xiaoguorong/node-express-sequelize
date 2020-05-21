@@ -3,7 +3,8 @@ var sequelize = require("../config")
 const customer = sequelize.define('c_customer', {
     id: {
         type: Sequelize.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true, 
     },
     code: Sequelize.STRING,
     province: Sequelize.STRING,
@@ -13,6 +14,7 @@ const customer = sequelize.define('c_customer', {
     date: Sequelize.STRING,
     content: Sequelize.STRING,
     databank_id: Sequelize.STRING,
+    status: Sequelize.BOOLEAN,
     created_time: Sequelize.INTEGER,
     update_time: Sequelize.INTEGER,
 }, {

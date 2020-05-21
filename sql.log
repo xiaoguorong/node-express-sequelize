@@ -8,6 +8,7 @@ CREATE TABLE `c_customer` (
 `date`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT "0000-00-00" COMMENT '维修日期' ,
 `content`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '备注' ,
 `databank_id`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件' ,
+`status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
 `created_time`  int(11) NULL COMMENT '创建时间' ,
 `update_time`  int(11) NULL COMMENT '更新时间' ,
 PRIMARY KEY (`id`)
@@ -29,6 +30,23 @@ PRIMARY KEY (`id`)
 ENGINE=InnoDB
 COMMENT='文件表'
 ;
+
+
+CREATE TABLE `c_user` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`mobile`  int(11) NULL COMMENT '手机号' ,
+`token`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'token' ,
+`create_time`  int(10) NULL ,
+`expire_time`  int(10) NULL ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+COMMENT='用户表'
+;
+
+ALTER TABLE `c_user`
+MODIFY COLUMN `mobile`  char(15) NULL DEFAULT NULL COMMENT '手机号' AFTER `id`;
+
 
 
 

@@ -1,6 +1,6 @@
 var express = require('express');
 var qiniu = require('qiniu')
-var constants = require("./../constants")
+var constants = require("./../modular/constants")
 var router = express.Router(); 
 let accessKey = constants.access_key;
 let secretKey = constants.secret_key;
