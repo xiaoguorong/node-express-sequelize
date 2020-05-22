@@ -14,4 +14,4 @@ const user = sequelize.define('c_user', {
     freezeTableName: true,//不修改表名
     timestamps: false,//是否自动添加时间戳createAt，updateAt
 });
-module.exports = user 
+module.exports = user     

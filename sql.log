@@ -1,7 +1,9 @@
 CREATE TABLE `c_customer` (
 `id`  int NOT NULL AUTO_INCREMENT COMMENT '车牌号' ,
+`car_type`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '车型' ,
 `code`  varchar(255) NULL ,
-`province`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT '车牌前缀' ,
+`uid`  int NULL ,
+`province`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '车牌前缀' ,
 `mobile`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '手机号' ,
 `type`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 0 COMMENT '维修类型 0保养 1其他' ,
 `price`  int NULL COMMENT '收费' ,
@@ -34,7 +36,7 @@ COMMENT='文件表'
 
 CREATE TABLE `c_user` (
 `id`  int NOT NULL AUTO_INCREMENT ,
-`mobile`  int(11) NULL COMMENT '手机号' ,
+`mobile` char(15) NULL COMMENT '手机号' ,
 `token`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'token' ,
 `create_time`  int(10) NULL ,
 `expire_time`  int(10) NULL ,
@@ -44,8 +46,44 @@ ENGINE=InnoDB
 COMMENT='用户表'
 ;
 
-ALTER TABLE `c_user`
-MODIFY COLUMN `mobile`  char(15) NULL DEFAULT NULL COMMENT '手机号' AFTER `id`;
+
+CREATE TABLE `c_stock_log` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`uid`  int NULL ,
+`name`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '物品名称' ,
+`count`  int NULL COMMENT '所剩数量' ,
+`price`  int NULL,
+`gid`  int NULL DEFAULT NULL COMMENT '物品id' ,
+`content`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+`date`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 0000-00-00 COMMENT '进出货日期' ,
+`create_time`  int(10) NULL ,
+`update_time`  int(10) NULL ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+COMMENT='库存表'
+;
+
+
+CREATE TABLE `c_goods` (
+`id`  int(255) NOT NULL AUTO_INCREMENT,
+`name`  varchar(255) NULL ,
+`count`  int NULL ,
+`uid`  int NULL ,
+`create_time`  int(10) NULL ,
+`update_time`  int(10) NULL 
+)
+ENGINE=InnoDB
+COMMENT='商品表'
+;
+
+
+
+
+
+
+
+
 
 
 

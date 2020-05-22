@@ -5,12 +5,127 @@ var request = require('request')
 var decrypt = require('./../modular/decrypt')
 var createToken = require('./../modular/createToken')
 var router = express.Router(); 
+var returnData,uid;
 //findOne  return {}
 //update return 0失败 1成功
+//create return 添加的本条数据详情
 
-router.get("/a",async (req,res)=>{
-	var a = await models.user.findAll();
-    res.send(a)
+router.use(async (req,res,next)=>{
+	returnData = {
+		code:'200',
+		msg:'操作成功',
+		content:[],
+		token_info:{}
+	}
+	if(req.path == '/getSessionKey' ||req.path == '/getMobile'){
+		next()
+	}else{
+		const token = req.headers.token;
+		var detail = await models.user.findOne({
+			where: {
+				token
+			}
+		}) 
+		if(detail){
+			uid = detail.id;
+			if(Date.parse(new Date())/1000 - detail.expire_time > 0){
+				returnData.code = '385'
+				returnData.msg = '登录过期'
+				res.send(returnData)
+			}else if(detail.expire_time - Date.parse(new Date())/1000 < 86400){
+				const newToken = createToken(detail.id)
+				const result = await models.user.update(
+				{
+					token:newToken,
+					expire_time:Date.parse(new Date())/1000+2592000
+				}, {
+			
+					'where': { id: detail.id }
+				})
+				if(result == 1){
+					returnData.token_info.token = newToken;
+					returnData.token_info.refresh_token = 1;
+					next()
+				}else{
+					returnData.code = '385'
+					returnData.msg = '登录过期'
+					res.send(returnData)
+				}
+				
+			}else{
+				returnData.token_info.token = token;
+				returnData.token_info.refresh_token = 0;
+				next()
+			}
+		}else{
+			returnData.code = '385'
+			returnData.msg = '登录过期'
+			res.send(returnData)
+		}
+	}
+	
+	
+}) 
+router.post("/add/goods",async(req,res)=>{
+	var detail = await models.goods.findOne({
+		where: {
+			name:req.body.name
+		}
+	}) 
+	if(!detail){
+		await models.goods.create({
+			uid,
+			name: req.body.name,
+			count: req.body.count,
+			create_time: Date.parse(new Date())/1000,
+			update_time: Date.parse(new Date())/1000
+		}) 
+		res.send(returnData)
+	}else{
+		returnData.code = 301;
+		returnData.msg = '商品已存在'
+		res.send(returnData)
+	}
+})
+router.post("/add/stock",async(req,res)=>{
+	var detail = await models.goods.findOne({
+		where: {
+			id:req.body.gid
+		}
+	}) 
+	if(detail){
+		await models.stock_log.create({
+			uid,
+			gid:req.body.gid,
+			name: req.body.name,
+			count: req.body.count,
+			price: req.body.price,
+			date: req.body.date,
+			content: req.body.content,
+			create_time: Date.parse(new Date())/1000,
+			update_time: Date.parse(new Date())/1000
+		})
+		
+		var result = await models.goods.update({
+			count:parseInt(detail.count)+parseInt(req.body.count),
+			update_time: Date.parse(new Date())/1000
+		},{
+			where:{
+				id:req.body.gid
+			}
+		})
+	}
+	res.send(returnData)
+
+})
+router.get("/goodsList",async (req,res)=>{
+	const result = await models.goods.findAll({
+		where:{
+			uid
+		}
+	});
+	returnData.content = result;
+    res.send(returnData)
 })
 router.post("/add/customer",async (req,res)=>{
 	const imgList = req.body.imgList;
@@ -19,7 +134,7 @@ router.post("/add/customer",async (req,res)=>{
 		data.push({
 			qnkey: element,
 			status: 1,
-			uid: 1,
+			uid,
 			create_time:Date.parse(new Date())/1000,
 			update_time:Date.parse(new Date())/1000
 		})
@@ -30,6 +145,7 @@ router.post("/add/customer",async (req,res)=>{
 	})
 	var list = await models.customer.create({
 		code: req.body.code,
+		uid,
 		province: req.body.province,
 		mobile: req.body.mobile,
 		type: req.body.type.join(","),
@@ -51,7 +167,7 @@ router.put("/add/customer",async (req,res)=>{
 		data.push({
 			qnkey: element,
 			status: 1,
-			uid: 1,
+			uid,
 			create_time:Date.parse(new Date())/1000,
 			update_time:Date.parse(new Date())/1000
 		})
@@ -118,31 +234,21 @@ router.post("/getMobile",async (req,res)=>{
 			'where': { id: detail.id }
 		}
 		)
+		returnData.token_info.token = token;
+		returnData.token_info.refresh_token = 1;
+		res.send(returnData)
 	}else{
-		var token = createToken(detail.id)
+		var token = createToken()
 		var list = await models.user.create({
 			mobile,
-			token,
-			created_time: Date.parse(new Date())/1000,
-			update_time: Date.parse(new Date())/1000+2592000
+			token, 
+			create_time: Date.parse(new Date())/1000,
+			expire_time: Date.parse(new Date())/1000+2592000
 		})
-		console.log(list)
-		res.send(list)
+		returnData.token_info.token = token;
+		returnData.token_info.refresh_token = 1;
+		res.send(returnData)
 	}
-	// var list = await models.customer.create({
-	// 	code: req.body.code,
-	// 	province: req.body.province,
-	// 	mobile: req.body.mobile,
-	// 	type: req.body.type.join(","),
-	// 	price: req.body.price,
-	// 	date: req.body.date,
-	// 	content: req.body.content,
-	// 	databank_id: databank_id.join(","),
-	// 	status:1,
-	// 	created_time: Date.parse(new Date())/1000,
-	// 	update_time: Date.parse(new Date())/1000
-	// })
-	res.send("sss")
 })
 
 module.exports=router
