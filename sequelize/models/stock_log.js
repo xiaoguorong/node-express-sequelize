@@ -12,6 +12,7 @@ const stock_log = sequelize.define('c_stock_log', {
     count:Sequelize.INTEGER,
     price:Sequelize.INTEGER,
     date: Sequelize.STRING,
+    status: Sequelize.BOOLEAN,
     content: Sequelize.STRING,
     create_time: Sequelize.INTEGER,
     update_time: Sequelize.INTEGER,

@@ -56,6 +56,7 @@ CREATE TABLE `c_stock_log` (
 `gid`  int NULL DEFAULT NULL COMMENT '物品id' ,
 `content`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
 `date`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 0000-00-00 COMMENT '进出货日期' ,
+`status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
 `create_time`  int(10) NULL ,
 `update_time`  int(10) NULL ,
 PRIMARY KEY (`id`)
@@ -70,6 +71,7 @@ CREATE TABLE `c_goods` (
 `name`  varchar(255) NULL ,
 `count`  int NULL ,
 `uid`  int NULL ,
+`status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
 `create_time`  int(10) NULL ,
 `update_time`  int(10) NULL 
 )

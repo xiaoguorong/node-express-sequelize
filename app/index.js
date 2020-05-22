@@ -9,12 +9,12 @@ var returnData,uid;
 //findOne  return {}
 //update return 0失败 1成功
 //create return 添加的本条数据详情
-
+//sum 求某字段的和，第一个参数字段名 第二个可以是where
 router.use(async (req,res,next)=>{
 	returnData = {
 		code:'200',
 		msg:'操作成功',
-		content:[],
+		content:{},
 		token_info:{}
 	}
 	if(req.path == '/getSessionKey' ||req.path == '/getMobile'){
@@ -66,6 +66,31 @@ router.use(async (req,res,next)=>{
 	
 	
 }) 
+router.get("/getData",async (req,res)=>{
+	const customerCount = await models.customer.count({
+		where:{
+			uid,
+			status:1
+		}
+	});
+	const goodsCount = await models.goods.count({
+		where:{
+			uid,
+			status:1
+		}
+	});
+	const goodsAllCount = await models.goods.sum('count',{
+		where:{
+			uid,
+			status:1
+		},
+	});
+	returnData.content.goodsAllCount = goodsAllCount;
+	returnData.content.customerCount = customerCount;
+	returnData.content.goodsCount = goodsCount;
+	console.log(returnData)
+    res.send(returnData)
+})
 router.post("/add/goods",async(req,res)=>{
 	var detail = await models.goods.findOne({
 		where: {

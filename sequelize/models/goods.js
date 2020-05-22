@@ -9,6 +9,7 @@ const goods = sequelize.define('c_goods', {
     uid: Sequelize.INTEGER,
     name: Sequelize.STRING,
     count:Sequelize.INTEGER,
+    status: Sequelize.BOOLEAN,
     create_time: Sequelize.INTEGER,
     update_time: Sequelize.INTEGER,
 }, {
