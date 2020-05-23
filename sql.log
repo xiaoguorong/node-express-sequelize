@@ -11,7 +11,7 @@ CREATE TABLE `c_customer` (
 `content`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '备注' ,
 `databank_id`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '附件' ,
 `status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
-`created_time`  int(11) NULL COMMENT '创建时间' ,
+`create_time`  int(11) NULL COMMENT '创建时间' ,
 `update_time`  int(11) NULL COMMENT '更新时间' ,
 PRIMARY KEY (`id`)
 )
@@ -31,7 +31,7 @@ PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB
 COMMENT='文件表'
-;
+; 
 
 
 CREATE TABLE `c_user` (
@@ -55,7 +55,7 @@ CREATE TABLE `c_stock_log` (
 `price`  int NULL,
 `gid`  int NULL DEFAULT NULL COMMENT '物品id' ,
 `content`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-`date`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 0000-00-00 COMMENT '进出货日期' ,
+`date`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT "0000-00-00" COMMENT '进出货日期' ,
 `status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
 `create_time`  int(10) NULL ,
 `update_time`  int(10) NULL ,
@@ -73,7 +73,8 @@ CREATE TABLE `c_goods` (
 `uid`  int NULL ,
 `status`  tinyint(2) NULL DEFAULT 1 COMMENT '状态1正常 -1 删除' ,
 `create_time`  int(10) NULL ,
-`update_time`  int(10) NULL 
+`update_time`  int(10) NULL ,
+PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB
 COMMENT='商品表'

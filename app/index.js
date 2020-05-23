@@ -1,12 +1,14 @@
 var express = require('express');
+var seq = require('sequelize');
 var models = require('./../sequelize')
 var constants = require("./../modular/constants")
 var request = require('request')
 var decrypt = require('./../modular/decrypt')
 var createToken = require('./../modular/createToken')
 var router = express.Router(); 
-var returnData,uid;
-//findOne  return {}
+var returnData,uid; 
+var Op = seq.Op;
+//findOne  return {} findAll return []
 //update return 0失败 1成功
 //create return 添加的本条数据详情
 //sum 求某字段的和，第一个参数字段名 第二个可以是where
@@ -66,6 +68,77 @@ router.use(async (req,res,next)=>{
 	
 	
 }) 
+router.get("/customer/detail",async (req,res)=>{
+	const detail = await models.customer.findOne({
+		where:{
+			uid,
+			status:1,
+			id:req.query.id
+		}
+	});
+	returnData.content = detail
+    res.send(returnData)
+})
+router.get("/customer/list",async (req,res)=>{
+	const list = await models.customer.findAll({
+		where:{
+			uid,
+			status:1,
+			[Op.or]:{
+				code:{
+					[Op.like]: '%'+req.query.keyword+'%',
+				},
+				car_type:{
+					[Op.like]: '%'+req.query.keyword+'%',
+				}
+			}
+		}
+	});
+	returnData.content = list
+    res.send(returnData)
+})
+router.get("/getCrm",async (req,res)=>{
+	const customerCount = await models.customer.count({
+		where:{
+			uid,
+			status:1,
+			create_time:{
+				[Op.gte]: req.query.start,
+				[Op.lt]: req.query.end,
+			}
+		}
+	});
+	const goodsAddCount = await models.stock_log.sum('count',{
+		where:{
+			uid,
+			status:1,
+			count:{
+				[Op.gt]: 0,
+			},
+			create_time:{
+				[Op.gte]: req.query.start,
+				[Op.lt]: req.query.end,
+			}
+		}
+	});
+	const goodsRemoveCount = await models.stock_log.sum('count',{
+		where:{
+			uid,
+			status:1,
+			count:{
+				[Op.lt]: 0,
+			},
+			create_time:{
+				[Op.gte]: req.query.start,
+				[Op.lt]: req.query.end,
+			}
+		},
+	});
+	returnData.content.goodsAddCount = goodsAddCount ? goodsAddCount : 0;
+	returnData.content.customerCount = customerCount;
+	returnData.content.goodsRemoveCount = goodsRemoveCount ? goodsRemoveCount : 0;
+    res.send(returnData)
+})
 router.get("/getData",async (req,res)=>{
 	const customerCount = await models.customer.count({
 		where:{
@@ -109,8 +182,8 @@ router.post("/add/goods",async(req,res)=>{
 	}else{
 		returnData.code = 301;
 		returnData.msg = '商品已存在'
-		res.send(returnData)
-	}
+		res.send(returnData)  
+	}  
 })
 router.post("/add/stock",async(req,res)=>{
 	var detail = await models.goods.findOne({

@@ -8,6 +8,7 @@ const customer = sequelize.define('c_customer', {
     },
     uid: Sequelize.INTEGER,
     code: Sequelize.STRING,
+    car_type: Sequelize.STRING,
     province: Sequelize.STRING,
     mobile: Sequelize.STRING,
     type: Sequelize.STRING,
