@@ -161,7 +161,6 @@ router.get("/getData",async (req,res)=>{
 	returnData.content.goodsAllCount = goodsAllCount;
 	returnData.content.customerCount = customerCount;
 	returnData.content.goodsCount = goodsCount;
-	console.log(returnData)
     res.send(returnData)
 })
 router.post("/add/goods",async(req,res)=>{
@@ -225,7 +224,7 @@ router.get("/goodsList",async (req,res)=>{
 	returnData.content = result;
     res.send(returnData)
 })
-router.post("/add/customer",async (req,res)=>{
+router.post("/customer/add",async (req,res)=>{
 	const imgList = req.body.imgList;
 	var data = [];
 	imgList.forEach(element => {
@@ -244,6 +243,7 @@ router.post("/add/customer",async (req,res)=>{
 	var list = await models.customer.create({
 		code: req.body.code,
 		uid,
+		carType:req.body.carType,
 		province: req.body.province,
 		mobile: req.body.mobile,
 		type: req.body.type.join(","),
@@ -258,7 +258,7 @@ router.post("/add/customer",async (req,res)=>{
 	res.send(list)
 
 })
-router.put("/add/customer",async (req,res)=>{
+router.put("/customer/edit",async (req,res)=>{
 	const imgList = req.body.imgList;
 	var data = [];
 	imgList.forEach(element => {
@@ -274,9 +274,10 @@ router.put("/add/customer",async (req,res)=>{
 	var databank_id = list.map(e=>{
 		return e.id
 	})
-	var list = await models.customer.update(
+	var result = await models.customer.update(
 		{
 			code: req.body.code,
+			carType:req.body.carType,
 			province: req.body.province,
 			mobile: req.body.mobile,
 			type: req.body.type.join(","),
@@ -290,20 +291,29 @@ router.put("/add/customer",async (req,res)=>{
 		  'where': { id: 2 }
 		}
 	  )
-	res.send(list)
+	  if(result != 1){
+		returnData.code = 303;
+		returnData.msg="修改失败"
+		  res.send(returnData)
+	  }
+	  res.send(returnData)
 
 })
-router.delete("/add/customer",async (req,res)=>{
-	await models.customer.update(
+router.delete("/customer/del",async (req,res)=>{
+	const result = await models.customer.update(
 		{	status:-1,
 			update_time: Date.parse(new Date())/1000
 		}, {
    
-		  'where': { id: 2 }
+		  'where': { id: req.body.id }
 		}
 	  )
-	res.send("ppp")
-
+	  if(result != 1){
+		returnData.code = 302;
+		returnData.msg = '删除成功'
+		res.send(returnData)
+	  }
+	  res.send(returnData)
 })
 
 router.get("/getSessionKey",(req,res)=>{
